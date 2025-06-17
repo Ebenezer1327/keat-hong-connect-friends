@@ -235,13 +235,17 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
                 {getLocalizedText("title")}
               </CardTitle>
 
-              <div className="flex flex-wrap gap-2 mb-3">
-                <div className="flex items-center gap-1 text-gray-600 text-sm">
-                  <Calendar className="h-4 w-4" />
-                  <span>
-                    {new Date(activity.activity_date).toLocaleDateString()}
-                  </span>
-                </div>
+              <div className="flex items-center gap-1 text-gray-600 text-sm">
+              <Calendar className="h-4 w-4" />
+              <span>
+                {new Date(activity.activity_date).toLocaleDateString()}{" "}
+                {new Date(activity.activity_date).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </span>
+            </div>
+
                 <div className="flex items-center gap-1 text-gray-600 text-sm">
                   <MapPin className="h-4 w-4" />
                   <span>{getLocalizedText("location")}</span>
