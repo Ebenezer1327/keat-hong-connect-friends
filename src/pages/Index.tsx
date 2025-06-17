@@ -19,7 +19,7 @@ const Index = () => {
 
   const translations = {
     en: {
-      welcome: 'Welcome to Keat Hong Community',
+      welcome: 'Welcome to JioME @ KH',
       subtitle: 'Connect with neighbors, join activities, earn rewards!',
       login: 'Login / Register',
       activities: 'Community Activities',
