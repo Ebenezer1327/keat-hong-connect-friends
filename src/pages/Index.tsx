@@ -9,7 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import LoginModal from '@/components/LoginModal';
 import ActivityCard from '@/components/ActivityCard';
 import PointsDisplay from '@/components/PointsDisplay';
-import LanguageSelector from '@/components/LanguageSelector';
+import LanguageSelector from '@/components/LanguageSelector';n
 
 const Index = () => {
   const { user, profile, loading } = useAuth();
@@ -19,7 +19,7 @@ const Index = () => {
 
   const translations = {
     en: {
-      welcome: 'Welcome to Keat Hong Community',
+      welcome: 'Welcome to JioME @ KH',
       subtitle: 'Connect with neighbors, join activities, earn rewards!',
       login: 'Login / Register',
       activities: 'Community Activities',
