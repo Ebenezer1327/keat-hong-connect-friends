@@ -172,9 +172,9 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, language }) =>
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md mx-auto">
+      <DialogContent className="max-w-md mx-auto overflow-y-scroll h-[60%]">
         <DialogHeader>
-          <DialogTitle className="text-xl sm:text-2xl font-bold text-center text-red-600 mb-4">
+          <DialogTitle className="text-xl sm:text-2xl font-bold text-center mt-4 text-red-600 mb-4">
             {t.welcome}
           </DialogTitle>
         </DialogHeader>
@@ -274,7 +274,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, language }) =>
             />
           </div>
 
-          {/* {!isLogin && (
+          {!isLogin && (
             <Card className="bg-blue-50 border-blue-200">
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-2">
@@ -284,12 +284,12 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, language }) =>
                 <p className="text-sm text-blue-700">{t.qrCodeInfo}</p>
               </CardContent>
             </Card>
-          )} */}
+          )}
 
           <Button 
             type="submit"
             disabled={loading}
-            className="w-full bg-red-600 hover:bg-red-700 text-white py-4 text-base font-semibold"
+            className="w-full bg-red-600 hover:bg-red-700 text-white py-4 text-base font-semibold "
           >
             {loading ? '...' : (isLogin ? t.loginButton : t.registerButton)}
           </Button>
