@@ -416,7 +416,7 @@ const ProfilePage = () => {
                   </div>
                 </div>
               </div>
-              <Badge className="bg-green-600 text-white px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-lg">
+              <Badge className="bg-green-600 text-white px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-lg hover:bg-green-600">
                 <Star className="h-4 w-4 sm:h-5 sm:w-5 mr-1" />
                 {profile.points} {t.points}
               </Badge>
@@ -445,7 +445,7 @@ const ProfilePage = () => {
                         Redeemed on {new Date(redemption.redeemed_at).toLocaleDateString()}
                       </div>
                     </div>
-                    <Badge className="bg-purple-100 text-purple-800 text-xs sm:text-sm">
+                    <Badge className="bg-purple-100 text-purple-800 text-xs sm:text-sm hover:bg-purple-100">
                       {redemption.points_spent} pts
                     </Badge>
                   </div>
@@ -570,7 +570,7 @@ const ProfilePage = () => {
                       <div className="font-medium text-sm sm:text-base truncate">{friend.username}</div>
                       <div className="text-xs sm:text-sm text-gray-600 truncate">{friend.phone_number}</div>
                     </div>
-                    <Badge className="bg-green-100 text-green-800 text-xs">
+                    <Badge className="bg-green-100 text-green-800 text-xs hover:bg-green-100">
                       {friend.points} pts
                     </Badge>
                   </div>

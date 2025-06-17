@@ -15,7 +15,8 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
-import { Dialog } from "./ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
+import InvitationBlock from "./InvitationBlock";
 
 interface Activity {
   id: string;
@@ -47,6 +48,15 @@ interface MutualFriend {
   username: string;
 }
 
+interface Friend {
+  id: string;
+  username: string;
+  phone_number: string;
+  points: number;
+  status: string;
+  request_id?: string;
+}
+
 const ActivityCard: React.FC<ActivityCardProps> = ({
   activity,
   language,
@@ -56,6 +66,49 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
   const [joined, setJoined] = useState(false);
   const [mutualFriends, setMutualFriends] = useState<MutualFriend[]>([]);
   const { profile, refreshProfile } = useAuth();
+  const [isOpen, setIsOpen] = useState(false);
+  const [friends, setFriends] = useState<Friend[]>([]);
+  const [reset, setReset] = useState(0);
+  const fetchFriends = async () => {
+    if (!profile) return;
+
+    const { data, error } = await supabase
+      .from("friendships")
+      .select(
+        `
+            id,
+            status,
+            friend:friend_id (
+              id,
+              username,
+              phone_number,
+              points
+            )
+          `
+      )
+      .eq("user_id", profile.id)
+      .eq("status", "accepted");
+    console.log("innnn");
+
+    if (error) {
+      console.error("Error fetching friends:", error);
+      return;
+    }
+
+    const friendsData =
+      data
+        ?.map((f) => ({
+          ...f.friend,
+          status: f.status,
+        }))
+        .filter((f) => f.id) || [];
+    setFriends([...friendsData]);
+    console.log(friendsData);
+  };
+
+  useEffect(() => {
+    fetchFriends();
+  }, [isOpen]);
 
   const translations = {
     en: {
@@ -67,6 +120,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
       joinError: "Failed to join activity",
       mutualFriendsJoined: "friends joined",
       sendInvitaion: "Send Invitation",
+      headerInvitation: "Invitations",
     },
     zh: {
       joinActivity: "参加活动",
@@ -224,9 +278,22 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
 
   return (
     <>
-      {/* <Dialog >
-
-      </Dialog> */}
+      <Dialog
+        open={isOpen}
+        onOpenChange={() => {
+          setIsOpen(false);
+        }}
+        
+      >
+        <DialogContent className="max-w-md mx-auto overflow-y-scroll h-[60%]">
+          <ul className=" pt-6">
+            {friends.map((friend, index) => {
+              return <InvitationBlock key={index} friend={friend} />;
+            })}
+          </ul>
+          {/* </div> */}
+        </DialogContent>
+      </Dialog>
       <Card className="border-2 border-red-100 hover:border-red-300 transition-colors">
         <CardHeader>
           <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
@@ -291,7 +358,9 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
             {isLoggedIn ? (
               <div className="flex gap-1">
                 <Button
-                  onClick={handleJoinActivity}
+                  onClick={() => {
+                    setIsOpen(true);
+                  }}
                   className={`${"bg-green-700"} text-white px-4 py-2 w-full sm:w-auto`}
                 >
                   <>
