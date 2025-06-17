@@ -274,7 +274,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, language }) =>
             />
           </div>
 
-          {!isLogin && (
+          {/* {!isLogin && (
             <Card className="bg-blue-50 border-blue-200">
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-2">
@@ -284,7 +284,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, language }) =>
                 <p className="text-sm text-blue-700">{t.qrCodeInfo}</p>
               </CardContent>
             </Card>
-          )}
+          )} */}
 
           <Button 
             type="submit"
