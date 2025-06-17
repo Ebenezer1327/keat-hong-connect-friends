@@ -9,7 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import LoginModal from '@/components/LoginModal';
 import ActivityCard from '@/components/ActivityCard';
 import PointsDisplay from '@/components/PointsDisplay';
-import LanguageSelector from '@/components/LanguageSelector';n
+import LanguageSelector from '@/components/LanguageSelector';
 
 const Index = () => {
   const { user, profile, loading } = useAuth();
