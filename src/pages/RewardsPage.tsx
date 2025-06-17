@@ -236,7 +236,7 @@ const RewardsPage = () => {
                         {getLocalizedText(reward, 'description')}
                       </p>
                     </div>
-                    <Badge className="bg-orange-100 text-orange-800 px-3 py-1 ml-0 sm:ml-4">
+                    <Badge className="bg-orange-100 text-orange-800 px-3 py-1 ml-0 sm:ml-4 hover:bg-orange-100">
                       <Star className="h-4 w-4 mr-1" />
                       {reward.points_cost} pts
                     </Badge>

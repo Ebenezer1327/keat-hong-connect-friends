@@ -15,6 +15,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { Dialog } from "./ui/dialog";
 
 interface Activity {
   id: string;
@@ -222,112 +223,117 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
   };
 
   return (
-    <Card className="border-2 border-red-100 hover:border-red-300 transition-colors">
-      <CardHeader>
-        <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
-          <div className="flex-1">
-            <CardTitle className="text-lg sm:text-xl text-gray-800 mb-2">
-              {getLocalizedText("title")}
-            </CardTitle>
+    <>
+      {/* <Dialog >
 
-            <div className="flex flex-wrap gap-2 mb-3">
-              <div className="flex items-center gap-1 text-gray-600 text-sm">
-                <Calendar className="h-4 w-4" />
-                <span>
-                  {new Date(activity.activity_date).toLocaleDateString()}
-                </span>
+      </Dialog> */}
+      <Card className="border-2 border-red-100 hover:border-red-300 transition-colors">
+        <CardHeader>
+          <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+            <div className="flex-1">
+              <CardTitle className="text-lg sm:text-xl text-gray-800 mb-2">
+                {getLocalizedText("title")}
+              </CardTitle>
+
+              <div className="flex flex-wrap gap-2 mb-3">
+                <div className="flex items-center gap-1 text-gray-600 text-sm">
+                  <Calendar className="h-4 w-4" />
+                  <span>
+                    {new Date(activity.activity_date).toLocaleDateString()}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1 text-gray-600 text-sm">
+                  <MapPin className="h-4 w-4" />
+                  <span>{getLocalizedText("location")}</span>
+                </div>
               </div>
-              <div className="flex items-center gap-1 text-gray-600 text-sm">
-                <MapPin className="h-4 w-4" />
-                <span>{getLocalizedText("location")}</span>
-              </div>
+
+              {/* Mutual Friends Section */}
+              {mutualFriends.length > 0 && (
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="flex -space-x-2">
+                    {mutualFriends.map((friend) => (
+                      <Avatar
+                        key={friend.id}
+                        className="h-6 w-6 border-2 border-white"
+                      >
+                        <AvatarFallback className="bg-blue-500 text-white text-xs">
+                          {friend.username.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                    ))}
+                  </div>
+                  <span className="text-sm text-blue-600">
+                    {mutualFriends.length} {t.mutualFriendsJoined}
+                  </span>
+                </div>
+              )}
             </div>
 
-            {/* Mutual Friends Section */}
-            {mutualFriends.length > 0 && (
-              <div className="flex items-center gap-2 mb-3">
-                <div className="flex -space-x-2">
-                  {mutualFriends.map((friend) => (
-                    <Avatar
-                      key={friend.id}
-                      className="h-6 w-6 border-2 border-white"
-                    >
-                      <AvatarFallback className="bg-blue-500 text-white text-xs">
-                        {friend.username.charAt(0).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                  ))}
-                </div>
-                <span className="text-sm text-blue-600">
-                  {mutualFriends.length} {t.mutualFriendsJoined}
-                </span>
+            <Badge className="bg-green-100 text-green-800 px-3 py-1">
+              <Star className="h-4 w-4 mr-1" />
+              {activity.points_reward} pts
+            </Badge>
+          </div>
+        </CardHeader>
+
+        <CardContent>
+          <p className="text-gray-700 mb-4 leading-relaxed text-sm sm:text-base">
+            {getLocalizedText("description")}
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-2 text-gray-600 text-sm">
+              <Users className="h-4 w-4" />
+              <span>Max {activity.max_attendees} attendees</span>
+            </div>
+
+            {isLoggedIn ? (
+              <div className="flex gap-1">
+                <Button
+                  onClick={handleJoinActivity}
+                  className={`${"bg-green-700"} text-white px-4 py-2 w-full sm:w-auto`}
+                >
+                  <>
+                    <Send></Send>
+                    {t.sendInvitaion}
+                  </>
+                </Button>
+                <Button
+                  onClick={handleJoinActivity}
+                  disabled={joining || joined}
+                  className={`${
+                    joined
+                      ? "bg-green-600 hover:bg-green-700"
+                      : "bg-orange-500 hover:bg-orange-600"
+                  } text-white px-4 py-2 w-full sm:w-auto`}
+                >
+                  {joined ? (
+                    <>
+                      <Check className="h-4 w-4 mr-2" />
+                      {t.joined}
+                    </>
+                  ) : (
+                    <>
+                      <UserPlus className="h-4 w-4 mr-2" />
+                      {joining ? "..." : t.joinActivity}
+                    </>
+                  )}
+                </Button>
               </div>
+            ) : (
+              <Button
+                disabled
+                className="bg-gray-400 text-white px-4 py-2 w-full sm:w-auto"
+              >
+                <UserPlus className="h-4 w-4 mr-2" />
+                {t.loginToJoin}
+              </Button>
             )}
           </div>
-
-          <Badge className="bg-green-100 text-green-800 px-3 py-1">
-            <Star className="h-4 w-4 mr-1" />
-            {activity.points_reward} pts
-          </Badge>
-        </div>
-      </CardHeader>
-
-      <CardContent>
-        <p className="text-gray-700 mb-4 leading-relaxed text-sm sm:text-base">
-          {getLocalizedText("description")}
-        </p>
-
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-          <div className="flex items-center gap-2 text-gray-600 text-sm">
-            <Users className="h-4 w-4" />
-            <span>Max {activity.max_attendees} attendees</span>
-          </div>
-
-          {isLoggedIn ? (
-            <div className="flex gap-1">
-              <Button
-                onClick={handleJoinActivity}
-                className={`${"bg-green-700"} text-white px-4 py-2 w-full sm:w-auto`}
-              >
-                <>
-                  <Send></Send>
-                  {t.sendInvitaion}
-                </>
-              </Button>
-              <Button
-                onClick={handleJoinActivity}
-                disabled={joining || joined}
-                className={`${
-                  joined
-                    ? "bg-green-600 hover:bg-green-700"
-                    : "bg-orange-500 hover:bg-orange-600"
-                } text-white px-4 py-2 w-full sm:w-auto`}
-              >
-                {joined ? (
-                  <>
-                    <Check className="h-4 w-4 mr-2" />
-                    {t.joined}
-                  </>
-                ) : (
-                  <>
-                    <UserPlus className="h-4 w-4 mr-2" />
-                    {joining ? "..." : t.joinActivity}
-                  </>
-                )}
-              </Button>
-            </div>
-          ) : (
-            <Button
-              disabled
-              className="bg-gray-400 text-white px-4 py-2 w-full sm:w-auto"
-            >
-              <UserPlus className="h-4 w-4 mr-2" />
-              {t.loginToJoin}
-            </Button>
-          )}
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </>
   );
 };
 
