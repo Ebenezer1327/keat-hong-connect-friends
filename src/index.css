@@ -1,8 +1,9 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. */
+/* Enhanced design system for senior-friendly interface */
 
 @layer base {
   :root {
@@ -34,22 +35,15 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -99,5 +93,52 @@
 
   body {
     @apply bg-background text-foreground;
+    font-size: 18px; /* Larger base font size for seniors */
+    line-height: 1.6;
+  }
+
+  /* Enhanced touch targets for senior users */
+  button, 
+  [role="button"], 
+  input[type="button"], 
+  input[type="submit"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Better focus visibility */
+  *:focus-visible {
+    outline: 3px solid #dc2626;
+    outline-offset: 2px;
+  }
+
+  /* Improved readability */
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    margin-bottom: 0.5em;
+  }
+
+  p {
+    margin-bottom: 1em;
+  }
+}
+
+@layer components {
+  /* Senior-friendly button styles */
+  .btn-senior {
+    @apply px-6 py-4 text-lg font-semibold rounded-lg transition-all duration-200;
+    @apply hover:scale-105 active:scale-95;
+    min-height: 56px;
+  }
+
+  /* High contrast card styles */
+  .card-senior {
+    @apply border-2 shadow-lg hover:shadow-xl transition-shadow duration-200;
+  }
+
+  /* Large touch target utilities */
+  .touch-target {
+    min-height: 48px;
+    min-width: 48px;
   }
 }
