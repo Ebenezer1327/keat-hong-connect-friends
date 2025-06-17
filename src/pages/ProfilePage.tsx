@@ -29,6 +29,19 @@ interface Friend {
   phone_number: string;
   points: number;
   status: string;
+  request_id?: string;
+}
+
+interface RedeemedReward {
+  id: string;
+  reward: {
+    title: string;
+    title_chinese: string;
+    title_malay: string;
+    title_tamil: string;
+  };
+  points_spent: number;
+  redeemed_at: string;
 }
 
 const ProfilePage = () => {
@@ -39,6 +52,7 @@ const ProfilePage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [pendingRequests, setPendingRequests] = useState<Friend[]>([]);
+  const [redeemedRewards, setRedeemedRewards] = useState<RedeemedReward[]>([]);
 
   const translations = {
     en: {
@@ -58,7 +72,9 @@ const ProfilePage = () => {
       requestSent: 'Friend request sent!',
       requestAccepted: 'Friend request accepted!',
       requestDeclined: 'Friend request declined!',
-      back: 'Back to Home'
+      back: 'Back to Home',
+      redeemedVouchers: 'My Redeemed Vouchers',
+      noRedeemedVouchers: 'No vouchers redeemed yet'
     },
     zh: {
       profile: '我的个人资料',
@@ -77,7 +93,9 @@ const ProfilePage = () => {
       requestSent: '好友请求已发送！',
       requestAccepted: '好友请求已接受！',
       requestDeclined: '好友请求已拒绝！',
-      back: '返回首页'
+      back: '返回首页',
+      redeemedVouchers: '我的兑换券',
+      noRedeemedVouchers: '还没有兑换券'
     },
     ms: {
       profile: 'Profil Saya',
@@ -96,7 +114,9 @@ const ProfilePage = () => {
       requestSent: 'Permintaan berkawan dihantar!',
       requestAccepted: 'Permintaan berkawan diterima!',
       requestDeclined: 'Permintaan berkawan ditolak!',
-      back: 'Kembali ke Laman Utama'
+      back: 'Kembali ke Laman Utama',
+      redeemedVouchers: 'Baucar Saya yang Ditebus',
+      noRedeemedVouchers: 'Tiada baucar ditebus lagi'
     },
     ta: {
       profile: 'என் சுயவிவரம்',
@@ -115,7 +135,9 @@ const ProfilePage = () => {
       requestSent: 'நண்பர் கோரிக்கை அனுப்பப்பட்டது!',
       requestAccepted: 'நண்பர் கோரிக்கை ஏற்றுக்கொள்ளப்பட்டது!',
       requestDeclined: 'நண்பர் கோரிக்கை நிராகரிக்கப்பட்டது!',
-      back: 'முகப்புக்குத் திரும்பு'
+      back: 'முகப்புக்குத் திரும்பு',
+      redeemedVouchers: 'என் மீட்டெடுக்கப்பட்ட வவுச்சர்கள்',
+      noRedeemedVouchers: 'இன்னும் வவுச்சர்கள் மீட்டெடுக்கப்படவில்லை'
     }
   };
 
@@ -131,6 +153,7 @@ const ProfilePage = () => {
     if (profile) {
       fetchFriends();
       fetchPendingRequests();
+      fetchRedeemedRewards();
     }
   }, [profile]);
 
@@ -157,7 +180,12 @@ const ProfilePage = () => {
       return;
     }
 
-    setFriends(data?.map(f => ({ ...f.friend, status: f.status })) || []);
+    const friendsData = data?.map(f => ({ 
+      ...f.friend, 
+      status: f.status 
+    })).filter(f => f.id) || [];
+    
+    setFriends(friendsData);
   };
 
   const fetchPendingRequests = async () => {
@@ -183,7 +211,40 @@ const ProfilePage = () => {
       return;
     }
 
-    setPendingRequests(data?.map(f => ({ ...f.user, status: f.status, request_id: f.id })) || []);
+    const requestsData = data?.map(f => ({ 
+      ...f.user, 
+      status: f.status, 
+      request_id: f.id 
+    })).filter(f => f.id) || [];
+    
+    setPendingRequests(requestsData);
+  };
+
+  const fetchRedeemedRewards = async () => {
+    if (!profile) return;
+
+    const { data, error } = await supabase
+      .from('reward_redemptions')
+      .select(`
+        id,
+        points_spent,
+        redeemed_at,
+        reward:reward_id (
+          title,
+          title_chinese,
+          title_malay,
+          title_tamil
+        )
+      `)
+      .eq('user_id', profile.id)
+      .order('redeemed_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching redeemed rewards:', error);
+      return;
+    }
+
+    setRedeemedRewards(data || []);
   };
 
   const searchUsers = async (query: string) => {
@@ -229,26 +290,64 @@ const ProfilePage = () => {
   };
 
   const handleFriendRequest = async (requestId: string, action: 'accept' | 'decline') => {
-    const status = action === 'accept' ? 'accepted' : 'blocked';
-    
-    const { error } = await supabase
-      .from('friendships')
-      .update({ status })
-      .eq('id', requestId);
-
-    if (error) {
-      console.error('Error handling friend request:', error);
-      return;
-    }
-
     if (action === 'accept') {
+      // Update the original friendship request to accepted
+      const { error: updateError } = await supabase
+        .from('friendships')
+        .update({ status: 'accepted' })
+        .eq('id', requestId);
+
+      if (updateError) {
+        console.error('Error accepting friend request:', updateError);
+        return;
+      }
+
+      // Create the reverse friendship
+      const request = pendingRequests.find(req => req.request_id === requestId);
+      if (request && profile) {
+        const { error: insertError } = await supabase
+          .from('friendships')
+          .insert({
+            user_id: profile.id,
+            friend_id: request.id,
+            status: 'accepted'
+          });
+
+        if (insertError) {
+          console.error('Error creating reverse friendship:', insertError);
+        }
+      }
+
       toast.success(t.requestAccepted);
       fetchFriends();
     } else {
+      const { error } = await supabase
+        .from('friendships')
+        .update({ status: 'blocked' })
+        .eq('id', requestId);
+
+      if (error) {
+        console.error('Error declining friend request:', error);
+        return;
+      }
+
       toast.success(t.requestDeclined);
     }
     
     fetchPendingRequests();
+  };
+
+  const getLocalizedRewardTitle = (reward: any) => {
+    switch (language) {
+      case 'zh':
+        return reward.title_chinese || reward.title;
+      case 'ms':
+        return reward.title_malay || reward.title;
+      case 'ta':
+        return reward.title_tamil || reward.title;
+      default:
+        return reward.title;
+    }
   };
 
   if (loading) {
@@ -265,8 +364,8 @@ const ProfilePage = () => {
     <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100">
       {/* Header */}
       <div className="bg-red-600 text-white shadow-lg">
-        <div className="max-w-4xl mx-auto px-4 py-6">
-          <div className="flex justify-between items-center">
+        <div className="max-w-4xl mx-auto px-4 py-4 sm:py-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div className="flex items-center gap-3">
               <Button
                 variant="ghost"
@@ -275,14 +374,14 @@ const ProfilePage = () => {
               >
                 <ArrowLeft className="h-5 w-5" />
               </Button>
-              <h1 className="text-2xl font-bold">{t.profile}</h1>
+              <h1 className="text-xl sm:text-2xl font-bold">{t.profile}</h1>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto">
               <LanguageSelector language={language} onLanguageChange={setLanguage} />
               <Button
                 variant="ghost"
                 onClick={signOut}
-                className="text-white hover:bg-red-700"
+                className="text-white hover:bg-red-700 text-sm sm:text-base"
               >
                 {t.signOut}
               </Button>
@@ -291,45 +390,76 @@ const ProfilePage = () => {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-6">
+      <div className="max-w-4xl mx-auto px-4 py-4 sm:py-6">
         {/* Profile Info */}
-        <Card className="mb-6 border-2 border-green-200 bg-green-50">
-          <CardHeader>
-            <div className="flex items-center gap-4">
-              <Avatar className="h-16 w-16">
-                <AvatarFallback className="bg-green-600 text-white text-xl">
+        <Card className="mb-4 sm:mb-6 border-2 border-green-200 bg-green-50">
+          <CardHeader className="pb-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <Avatar className="h-12 w-12 sm:h-16 sm:w-16 mx-auto sm:mx-0">
+                <AvatarFallback className="bg-green-600 text-white text-lg sm:text-xl">
                   {profile.username.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              <div className="flex-1">
-                <CardTitle className="text-2xl text-gray-800 flex items-center gap-2">
-                  <User className="h-6 w-6" />
+              <div className="flex-1 text-center sm:text-left">
+                <CardTitle className="text-lg sm:text-2xl text-gray-800 flex items-center justify-center sm:justify-start gap-2 mb-2">
+                  <User className="h-5 w-5 sm:h-6 sm:w-6" />
                   {profile.username}
                 </CardTitle>
-                <div className="flex items-center gap-4 mt-2">
-                  <div className="flex items-center gap-1 text-gray-600">
-                    <Phone className="h-4 w-4" />
+                <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
+                  <div className="flex items-center gap-1 text-gray-600 text-sm">
+                    <Phone className="h-3 w-3 sm:h-4 sm:w-4" />
                     <span>{profile.phone_number}</span>
                   </div>
-                  <div className="flex items-center gap-1 text-gray-600">
-                    <QrCode className="h-4 w-4" />
+                  <div className="flex items-center gap-1 text-gray-600 text-sm">
+                    <QrCode className="h-3 w-3 sm:h-4 sm:w-4" />
                     <span>{profile.qr_code}</span>
                   </div>
                 </div>
               </div>
-              <Badge className="bg-green-600 text-white px-4 py-2 text-lg">
-                <Star className="h-5 w-5 mr-1" />
+              <Badge className="bg-green-600 text-white px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-lg">
+                <Star className="h-4 w-4 sm:h-5 sm:w-5 mr-1" />
                 {profile.points} {t.points}
               </Badge>
             </div>
           </CardHeader>
         </Card>
 
-        {/* Add Friends Section */}
-        <Card className="mb-6">
+        {/* Redeemed Vouchers Section */}
+        <Card className="mb-4 sm:mb-6">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <UserPlus className="h-6 w-6 text-blue-600" />
+            <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+              <QrCode className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" />
+              {t.redeemedVouchers}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {redeemedRewards.length === 0 ? (
+              <div className="text-center text-gray-500 py-4 sm:py-8">{t.noRedeemedVouchers}</div>
+            ) : (
+              <div className="grid gap-3 sm:gap-4">
+                {redeemedRewards.map((redemption) => (
+                  <div key={redemption.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 sm:p-4 bg-purple-50 rounded-lg gap-2">
+                    <div className="flex-1">
+                      <div className="font-medium text-sm sm:text-base">{getLocalizedRewardTitle(redemption.reward)}</div>
+                      <div className="text-xs sm:text-sm text-gray-600">
+                        Redeemed on {new Date(redemption.redeemed_at).toLocaleDateString()}
+                      </div>
+                    </div>
+                    <Badge className="bg-purple-100 text-purple-800 text-xs sm:text-sm">
+                      {redemption.points_spent} pts
+                    </Badge>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Add Friends Section */}
+        <Card className="mb-4 sm:mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+              <UserPlus className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
               {t.addFriends}
             </CardTitle>
           </CardHeader>
@@ -350,14 +480,15 @@ const ProfilePage = () => {
             {searchResults.length > 0 && (
               <div className="mt-4 space-y-2">
                 {searchResults.map((user) => (
-                  <div key={user.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div>
+                  <div key={user.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 bg-gray-50 rounded-lg gap-3">
+                    <div className="flex-1">
                       <div className="font-medium">{user.username}</div>
                       <div className="text-sm text-gray-600">{user.phone_number}</div>
                     </div>
                     <Button
                       onClick={() => sendFriendRequest(user.id)}
-                      className="bg-blue-600 hover:bg-blue-700"
+                      className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto"
+                      size="sm"
                     >
                       {t.sendRequest}
                     </Button>
@@ -374,34 +505,35 @@ const ProfilePage = () => {
 
         {/* Pending Friend Requests */}
         {pendingRequests.length > 0 && (
-          <Card className="mb-6">
+          <Card className="mb-4 sm:mb-6">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Users className="h-6 w-6 text-orange-600" />
+              <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+                <Users className="h-5 w-5 sm:h-6 sm:w-6 text-orange-600" />
                 {t.pendingRequests}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
                 {pendingRequests.map((request) => (
-                  <div key={request.id} className="flex items-center justify-between p-3 bg-orange-50 rounded-lg">
-                    <div>
+                  <div key={request.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 bg-orange-50 rounded-lg gap-3">
+                    <div className="flex-1">
                       <div className="font-medium">{request.username}</div>
                       <div className="text-sm text-gray-600">{request.phone_number}</div>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 w-full sm:w-auto">
                       <Button
-                        onClick={() => handleFriendRequest(request.request_id, 'accept')}
-                        className="bg-green-600 hover:bg-green-700"
+                        onClick={() => handleFriendRequest(request.request_id!, 'accept')}
+                        className="bg-green-600 hover:bg-green-700 flex-1 sm:flex-none"
                         size="sm"
                       >
                         <Check className="h-4 w-4 mr-1" />
                         {t.accept}
                       </Button>
                       <Button
-                        onClick={() => handleFriendRequest(request.request_id, 'decline')}
+                        onClick={() => handleFriendRequest(request.request_id!, 'decline')}
                         variant="outline"
                         size="sm"
+                        className="flex-1 sm:flex-none"
                       >
                         <X className="h-4 w-4 mr-1" />
                         {t.decline}
@@ -417,28 +549,28 @@ const ProfilePage = () => {
         {/* Friends List */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="h-6 w-6 text-green-600" />
+            <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+              <Users className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
               {t.friends} ({friends.length})
             </CardTitle>
           </CardHeader>
           <CardContent>
             {friends.length === 0 ? (
-              <div className="text-center text-gray-500 py-8">{t.noFriends}</div>
+              <div className="text-center text-gray-500 py-4 sm:py-8">{t.noFriends}</div>
             ) : (
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid gap-4 sm:grid-cols-2">
                 {friends.map((friend) => (
-                  <div key={friend.id} className="flex items-center gap-3 p-4 bg-green-50 rounded-lg">
-                    <Avatar>
+                  <div key={friend.id} className="flex items-center gap-3 p-3 sm:p-4 bg-green-50 rounded-lg">
+                    <Avatar className="h-10 w-10 sm:h-12 sm:w-12">
                       <AvatarFallback className="bg-green-600 text-white">
                         {friend.username.charAt(0).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="flex-1">
-                      <div className="font-medium">{friend.username}</div>
-                      <div className="text-sm text-gray-600">{friend.phone_number}</div>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium text-sm sm:text-base truncate">{friend.username}</div>
+                      <div className="text-xs sm:text-sm text-gray-600 truncate">{friend.phone_number}</div>
                     </div>
-                    <Badge className="bg-green-100 text-green-800">
+                    <Badge className="bg-green-100 text-green-800 text-xs">
                       {friend.points} pts
                     </Badge>
                   </div>

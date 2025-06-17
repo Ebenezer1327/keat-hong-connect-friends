@@ -29,16 +29,19 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, language }) =>
 
   const translations = {
     en: {
-      loginTitle: 'Welcome Back!',
-      registerTitle: 'Join Our Community!',
+      welcome: 'Welcome to Keat Hong Community',
+      loginTitle: 'Login to Your Account',
+      registerTitle: 'Create New Account',
       email: 'Email',
       username: 'Username',
       phone: 'Phone Number',
       password: 'Password',
       loginButton: 'Login',
       registerButton: 'Register',
-      switchToRegister: "Don't have an account? Register here",
-      switchToLogin: 'Already have an account? Login here',
+      switchToRegister: 'Need an account?',
+      switchToLogin: 'Have an account?',
+      registerBtn: 'Register',
+      loginBtn: 'Login',
       emailHelp: 'We use your email for login and notifications',
       usernameHelp: 'Choose a friendly name for the community',
       phoneHelp: 'We use your phone number for connecting with friends',
@@ -49,16 +52,19 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, language }) =>
       registerError: 'Registration failed. Please try again.'
     },
     zh: {
-      loginTitle: '欢迎回来！',
-      registerTitle: '加入我们的社区！',
+      welcome: '欢迎来到吉丰社区',
+      loginTitle: '登录您的账户',
+      registerTitle: '创建新账户',
       email: '电子邮件',
       username: '用户名',
       phone: '电话号码',
       password: '密码',
       loginButton: '登录',
       registerButton: '注册',
-      switchToRegister: '没有账户？点击这里注册',
-      switchToLogin: '已有账户？点击这里登录',
+      switchToRegister: '需要账户？',
+      switchToLogin: '已有账户？',
+      registerBtn: '注册',
+      loginBtn: '登录',
       emailHelp: '我们使用您的电子邮件进行登录和通知',
       usernameHelp: '为社区选择一个友好的名字',
       phoneHelp: '我们使用您的电话号码与朋友连接',
@@ -69,16 +75,19 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, language }) =>
       registerError: '注册失败。请重试。'
     },
     ms: {
-      loginTitle: 'Selamat Kembali!',
-      registerTitle: 'Sertai Komuniti Kami!',
+      welcome: 'Selamat Datang ke Komuniti Keat Hong',
+      loginTitle: 'Log Masuk ke Akaun Anda',
+      registerTitle: 'Cipta Akaun Baru',
       email: 'E-mel',
       username: 'Nama Pengguna',
       phone: 'Nombor Telefon',
       password: 'Kata Laluan',
       loginButton: 'Log Masuk',
       registerButton: 'Daftar',
-      switchToRegister: 'Tiada akaun? Daftar di sini',
-      switchToLogin: 'Sudah ada akaun? Log masuk di sini',
+      switchToRegister: 'Perlukan akaun?',
+      switchToLogin: 'Ada akaun?',
+      registerBtn: 'Daftar',
+      loginBtn: 'Log Masuk',
       emailHelp: 'Kami menggunakan e-mel anda untuk log masuk dan pemberitahuan',
       usernameHelp: 'Pilih nama mesra untuk komuniti',
       phoneHelp: 'Kami menggunakan nombor telefon anda untuk berhubung dengan kawan',
@@ -89,16 +98,19 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, language }) =>
       registerError: 'Pendaftaran gagal. Sila cuba lagi.'
     },
     ta: {
-      loginTitle: 'மீண்டும் வரவேற்கிறோம்!',
-      registerTitle: 'எங்கள் சமுதாயத்தில் சேருங்கள்!',
+      welcome: 'கீட் ஹாங் சமுதாயத்திற்கு வரவேற்கிறோம்',
+      loginTitle: 'உங்கள் கணக்கில் உள்நுழையுங்கள்',
+      registerTitle: 'புதிய கணக்கை உருவாக்கவும்',
       email: 'மின்னஞ்சல்',
       username: 'பயனர் பெயர்',
       phone: 'தொலைபேசி எண்',
       password: 'கடவுச்சொல்',
       loginButton: 'உள்நுழைவு',
       registerButton: 'பதிவு செய்யுங்கள்',
-      switchToRegister: 'கணக்கு இல்லையா? இங்கே பதிவு செய்யுங்கள்',
-      switchToLogin: 'ஏற்கனவே கணக்கு உள்ளதா? இங்கே உள்நுழையுங்கள்',
+      switchToRegister: 'கணக்கு தேவையா?',
+      switchToLogin: 'கணக்கு உள்ளதா?',
+      registerBtn: 'பதிவு',
+      loginBtn: 'உள்நுழைவு',
       emailHelp: 'உள்நுழைவு மற்றும் அறிவிப்புகளுக்கு உங்கள் மின்னஞ்சலைப் பயன்படுத்துகிறோம்',
       usernameHelp: 'சமுதாயத்திற்கு நட்பான பெயரைத் தேர்ந்தெடுக்கவும்',
       phoneHelp: 'நண்பர்களுடன் இணைக்க உங்கள் தொலைபேசி எண்ணைப் பயன்படுத்துகிறோம்',
@@ -144,18 +156,56 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, language }) =>
     }
   };
 
+  const resetForm = () => {
+    setFormData({
+      email: '',
+      username: '',
+      phone: '',
+      password: ''
+    });
+  };
+
+  const switchMode = (mode: boolean) => {
+    setIsLogin(mode);
+    resetForm();
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-md mx-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-center text-red-600">
-            {isLogin ? t.loginTitle : t.registerTitle}
+          <DialogTitle className="text-xl sm:text-2xl font-bold text-center text-red-600 mb-4">
+            {t.welcome}
           </DialogTitle>
         </DialogHeader>
 
+        {/* Mode Selection Buttons */}
+        <div className="grid grid-cols-2 gap-2 mb-6">
+          <Button
+            type="button"
+            onClick={() => switchMode(true)}
+            variant={isLogin ? "default" : "outline"}
+            className={`py-3 ${isLogin ? 'bg-red-600 hover:bg-red-700 text-white' : 'border-red-200 text-red-600 hover:bg-red-50'}`}
+          >
+            {t.loginBtn}
+          </Button>
+          <Button
+            type="button"
+            onClick={() => switchMode(false)}
+            variant={!isLogin ? "default" : "outline"}
+            className={`py-3 ${!isLogin ? 'bg-red-600 hover:bg-red-700 text-white' : 'border-red-200 text-red-600 hover:bg-red-50'}`}
+          >
+            {t.registerBtn}
+          </Button>
+        </div>
+
+        <h3 className="text-lg font-semibold text-center mb-4">
+          {isLogin ? t.loginTitle : t.registerTitle}
+        </h3>
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="email" className="text-lg font-medium flex items-center gap-2">
+            <Label htmlFor="email" className="text-base font-medium flex items-center gap-2">
               <Mail className="h-4 w-4" />
               {t.email}
             </Label>
@@ -164,7 +214,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, language }) =>
               type="email"
               value={formData.email}
               onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-              className="mt-2 text-lg py-3"
+              className="mt-2 text-base py-3"
               placeholder="user@example.com"
               required
             />
@@ -174,7 +224,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, language }) =>
           {!isLogin && (
             <>
               <div>
-                <Label htmlFor="username" className="text-lg font-medium flex items-center gap-2">
+                <Label htmlFor="username" className="text-base font-medium flex items-center gap-2">
                   <User className="h-4 w-4" />
                   {t.username}
                 </Label>
@@ -183,7 +233,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, language }) =>
                   type="text"
                   value={formData.username}
                   onChange={(e) => setFormData(prev => ({ ...prev, username: e.target.value }))}
-                  className="mt-2 text-lg py-3"
+                  className="mt-2 text-base py-3"
                   placeholder="Uncle Tan, Auntie Lim..."
                   required
                 />
@@ -191,7 +241,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, language }) =>
               </div>
 
               <div>
-                <Label htmlFor="phone" className="text-lg font-medium flex items-center gap-2">
+                <Label htmlFor="phone" className="text-base font-medium flex items-center gap-2">
                   <Phone className="h-4 w-4" />
                   {t.phone}
                 </Label>
@@ -200,7 +250,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, language }) =>
                   type="tel"
                   value={formData.phone}
                   onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                  className="mt-2 text-lg py-3"
+                  className="mt-2 text-base py-3"
                   placeholder="8123 4567"
                   required
                 />
@@ -210,7 +260,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, language }) =>
           )}
 
           <div>
-            <Label htmlFor="password" className="text-lg font-medium flex items-center gap-2">
+            <Label htmlFor="password" className="text-base font-medium flex items-center gap-2">
               <Lock className="h-4 w-4" />
               {t.password}
             </Label>
@@ -219,7 +269,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, language }) =>
               type="password"
               value={formData.password}
               onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-              className="mt-2 text-lg py-3"
+              className="mt-2 text-base py-3"
               required
             />
           </div>
@@ -239,20 +289,10 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, language }) =>
           <Button 
             type="submit"
             disabled={loading}
-            className="w-full bg-red-600 hover:bg-red-700 text-white py-4 text-lg font-semibold"
+            className="w-full bg-red-600 hover:bg-red-700 text-white py-4 text-base font-semibold"
           >
             {loading ? '...' : (isLogin ? t.loginButton : t.registerButton)}
           </Button>
-
-          <div className="text-center">
-            <button
-              type="button"
-              onClick={() => setIsLogin(!isLogin)}
-              className="text-red-600 hover:text-red-800 underline text-lg"
-            >
-              {isLogin ? t.switchToRegister : t.switchToLogin}
-            </button>
-          </div>
         </form>
       </DialogContent>
     </Dialog>

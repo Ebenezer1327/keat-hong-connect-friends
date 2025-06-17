@@ -48,7 +48,9 @@ const RewardsPage = () => {
       noRewards: 'No rewards available',
       redeemSuccess: 'Reward redeemed successfully!',
       redeemError: 'Failed to redeem reward',
-      back: 'Back to Home'
+      back: 'Back to Home',
+      canAfford: 'You can afford this!',
+      needMore: 'Need {points} more points'
     },
     zh: {
       rewardsStore: '奖励商店',
@@ -59,7 +61,9 @@ const RewardsPage = () => {
       noRewards: '暂无可用奖励',
       redeemSuccess: '奖励兑换成功！',
       redeemError: '兑换奖励失败',
-      back: '返回首页'
+      back: '返回首页',
+      canAfford: '您可以负担得起！',
+      needMore: '还需要 {points} 积分'
     },
     ms: {
       rewardsStore: 'Kedai Ganjaran',
@@ -70,7 +74,9 @@ const RewardsPage = () => {
       noRewards: 'Tiada ganjaran tersedia',
       redeemSuccess: 'Ganjaran berjaya ditebus!',
       redeemError: 'Gagal menebus ganjaran',
-      back: 'Kembali ke Laman Utama'
+      back: 'Kembali ke Laman Utama',
+      canAfford: 'Anda mampu ini!',
+      needMore: 'Perlu {points} mata lagi'
     },
     ta: {
       rewardsStore: 'வெகுமதி அங்காடி',
@@ -81,7 +87,9 @@ const RewardsPage = () => {
       noRewards: 'வெகுமதிகள் கிடைக்கவில்லை',
       redeemSuccess: 'வெகுமதி வெற்றிகரமாக மீட்டெடுக்கப்பட்டது!',
       redeemError: 'வெகுமதி மீட்டெடுப்பதில் தோல்வி',
-      back: 'முகப்புக்குத் திரும்பு'
+      back: 'முகப்புக்குத் திரும்பு',
+      canAfford: 'நீங்கள் இதை வாங்க முடியும்!',
+      needMore: '{points} புள்ளிகள் மேலும் தேவை'
     }
   };
 
@@ -183,8 +191,8 @@ const RewardsPage = () => {
     <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100">
       {/* Header */}
       <div className="bg-red-600 text-white shadow-lg">
-        <div className="max-w-4xl mx-auto px-4 py-6">
-          <div className="flex justify-between items-center">
+        <div className="max-w-4xl mx-auto px-4 py-4 sm:py-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div className="flex items-center gap-3">
               <Button
                 variant="ghost"
@@ -193,12 +201,12 @@ const RewardsPage = () => {
               >
                 <ArrowLeft className="h-5 w-5" />
               </Button>
-              <h1 className="text-2xl font-bold">{t.rewardsStore}</h1>
+              <h1 className="text-xl sm:text-2xl font-bold">{t.rewardsStore}</h1>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto">
               <LanguageSelector language={language} onLanguageChange={setLanguage} />
-              <Badge className="bg-green-600 text-white px-4 py-2 text-lg">
-                <Star className="h-5 w-5 mr-1" />
+              <Badge className="bg-green-600 text-white px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-lg">
+                <Star className="h-4 w-4 sm:h-5 sm:w-5 mr-1" />
                 {profile.points} {t.myPoints}
               </Badge>
             </div>
@@ -206,29 +214,29 @@ const RewardsPage = () => {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-6">
+      <div className="max-w-4xl mx-auto px-4 py-4 sm:py-6">
         {rewards.length === 0 ? (
-          <Card className="text-center py-12">
+          <Card className="text-center py-8 sm:py-12">
             <CardContent>
-              <Gift className="h-16 w-16 mx-auto text-gray-400 mb-4" />
-              <p className="text-xl text-gray-600">{t.noRewards}</p>
+              <Gift className="h-12 w-12 sm:h-16 sm:w-16 mx-auto text-gray-400 mb-4" />
+              <p className="text-lg sm:text-xl text-gray-600">{t.noRewards}</p>
             </CardContent>
           </Card>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
             {rewards.map((reward) => (
-              <Card key={reward.id} className="border-2 border-orange-100 hover:border-orange-300 transition-colors">
+              <Card key={reward.id} className="border-2 border-orange-100">
                 <CardHeader>
-                  <div className="flex justify-between items-start">
+                  <div className="flex flex-col sm:flex-row justify-between items-start gap-3">
                     <div className="flex-1">
-                      <CardTitle className="text-xl text-gray-800 mb-2">
+                      <CardTitle className="text-lg sm:text-xl text-gray-800 mb-2">
                         {getLocalizedText(reward, 'title')}
                       </CardTitle>
-                      <p className="text-gray-600 leading-relaxed">
+                      <p className="text-gray-600 leading-relaxed text-sm sm:text-base">
                         {getLocalizedText(reward, 'description')}
                       </p>
                     </div>
-                    <Badge className="bg-orange-100 text-orange-800 px-3 py-1 ml-4">
+                    <Badge className="bg-orange-100 text-orange-800 px-3 py-1 ml-0 sm:ml-4">
                       <Star className="h-4 w-4 mr-1" />
                       {reward.points_cost} pts
                     </Badge>
@@ -236,11 +244,11 @@ const RewardsPage = () => {
                 </CardHeader>
                 
                 <CardContent>
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                     <div className="text-sm text-gray-500">
                       {profile.points >= reward.points_cost 
-                        ? '✅ You can afford this!' 
-                        : `❌ Need ${reward.points_cost - profile.points} more points`
+                        ? `✅ ${t.canAfford}` 
+                        : `❌ ${t.needMore.replace('{points}', (reward.points_cost - profile.points).toString())}`
                       }
                     </div>
                     
@@ -254,7 +262,7 @@ const RewardsPage = () => {
                         profile.points >= reward.points_cost
                           ? 'bg-green-600 hover:bg-green-700' 
                           : 'bg-gray-400'
-                      } text-white px-6 py-2`}
+                      } text-white px-4 py-2 w-full sm:w-auto`}
                     >
                       {redeeming === reward.id ? (
                         <>

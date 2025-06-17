@@ -100,65 +100,65 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100">
       {/* Header */}
       <div className="bg-red-600 text-white shadow-lg">
-        <div className="max-w-4xl mx-auto px-4 py-6">
-          <div className="flex justify-between items-center mb-4">
+        <div className="max-w-4xl mx-auto px-4 py-4 sm:py-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
             <div className="flex items-center gap-3">
-              <Users className="h-8 w-8" />
+              <Users className="h-6 w-6 sm:h-8 sm:w-8" />
               <div>
-                <h1 className="text-2xl font-bold">{t.welcome}</h1>
-                <p className="text-red-100 text-lg">{t.subtitle}</p>
+                <h1 className="text-xl sm:text-2xl font-bold">{t.welcome}</h1>
+                <p className="text-red-100 text-base sm:text-lg">{t.subtitle}</p>
               </div>
             </div>
             <LanguageSelector language={language} onLanguageChange={setLanguage} />
           </div>
           
           <div className="flex items-center gap-2 text-red-100">
-            <MapPin className="h-5 w-5" />
-            <span className="text-lg">{t.location}</span>
+            <MapPin className="h-4 w-4 sm:h-5 sm:w-5" />
+            <span className="text-base sm:text-lg">{t.location}</span>
           </div>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-6">
+      <div className="max-w-4xl mx-auto px-4 py-4 sm:py-6">
         {/* Emergency Call Button - Always Visible */}
-        <div className="mb-6">
+        <div className="mb-4 sm:mb-6">
           <Button 
             onClick={handleEmergencyCall}
-            className="w-full bg-red-700 hover:bg-red-800 text-white py-6 text-xl font-bold shadow-lg"
+            className="w-full bg-red-700 hover:bg-red-800 text-white py-4 sm:py-6 text-lg sm:text-xl font-bold shadow-lg"
           >
-            <Phone className="h-6 w-6 mr-3" />
+            <Phone className="h-5 w-5 sm:h-6 sm:w-6 mr-2 sm:mr-3" />
             {t.emergency}: 6769 4194
           </Button>
         </div>
 
         {/* Login/User Status */}
         {!user ? (
-          <Card className="mb-6 border-2 border-red-200">
-            <CardContent className="p-6 text-center">
-              <User className="h-12 w-12 mx-auto mb-4 text-red-600" />
-              <p className="text-xl mb-4 text-gray-700">{t.joinCommunity}</p>
+          <Card className="mb-4 sm:mb-6 border-2 border-red-200">
+            <CardContent className="p-4 sm:p-6 text-center">
+              <User className="h-10 w-10 sm:h-12 sm:w-12 mx-auto mb-4 text-red-600" />
+              <p className="text-lg sm:text-xl mb-4 text-gray-700">{t.joinCommunity}</p>
               <Button 
                 onClick={() => setShowLogin(true)}
-                className="bg-red-600 hover:bg-red-700 text-white py-4 px-8 text-lg font-semibold"
+                className="bg-red-600 hover:bg-red-700 text-white py-3 sm:py-4 px-6 sm:px-8 text-base sm:text-lg font-semibold w-full sm:w-auto"
               >
                 {t.login}
               </Button>
             </CardContent>
           </Card>
         ) : (
-          <div className="mb-6">
+          <div className="mb-4 sm:mb-6">
             <PointsDisplay user={profile} language={language} />
           </div>
         )}
 
         {/* Activities Section */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-6">
-            <Calendar className="h-8 w-8 text-red-600" />
-            <h2 className="text-3xl font-bold text-gray-800">{t.activities}</h2>
+        <div className="mb-6 sm:mb-8">
+          <div className="flex items-center gap-3 mb-4 sm:mb-6">
+            <Calendar className="h-6 w-6 sm:h-8 sm:w-8 text-red-600" />
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">{t.activities}</h2>
           </div>
           
-          <div className="grid gap-6">
+          <div className="grid gap-4 sm:gap-6">
             {activities.map(activity => (
               <ActivityCard 
                 key={activity.id} 
@@ -172,16 +172,16 @@ const Index = () => {
 
         {/* Quick Actions for Logged In Users */}
         {user && (
-          <div className="grid md:grid-cols-2 gap-4 mb-6">
+          <div className="grid gap-4 sm:grid-cols-2 mb-4 sm:mb-6">
             <Link to="/profile">
-              <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white py-6 text-lg">
-                <Users className="h-6 w-6 mr-3" />
+              <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 sm:py-6 text-base sm:text-lg">
+                <Users className="h-5 w-5 sm:h-6 sm:w-6 mr-2 sm:mr-3" />
                 {t.profile}
               </Button>
             </Link>
             <Link to="/rewards">
-              <Button className="w-full bg-green-600 hover:bg-green-700 text-white py-6 text-lg">
-                <Gift className="h-6 w-6 mr-3" />
+              <Button className="w-full bg-green-600 hover:bg-green-700 text-white py-4 sm:py-6 text-base sm:text-lg">
+                <Gift className="h-5 w-5 sm:h-6 sm:w-6 mr-2 sm:mr-3" />
                 {t.rewards}
               </Button>
             </Link>
