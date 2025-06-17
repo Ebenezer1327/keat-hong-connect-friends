@@ -116,7 +116,8 @@ const RewardsPage = () => {
       console.error('Error fetching rewards:', error);
       return;
     }
-
+    console.log(data);
+    
     setRewards(data || []);
   };
 
@@ -227,6 +228,7 @@ const RewardsPage = () => {
             {rewards.map((reward) => (
               <Card key={reward.id} className="border-2 border-orange-100">
                 <CardHeader>
+                  <img src={reward.image_url}></img>
                   <div className="flex flex-col sm:flex-row justify-between items-start gap-3">
                     <div className="flex-1">
                       <CardTitle className="text-lg sm:text-xl text-gray-800 mb-2">
