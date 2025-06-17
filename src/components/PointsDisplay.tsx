@@ -24,10 +24,26 @@ const PointsDisplay: React.FC<PointsDisplayProps> = ({ user, language }) => {
       qrCode: '您的二维码',
       invite: '邀请家人获得额外积分！',
       nextReward: '200积分可获得下一个奖励'
+    },
+    ms: {
+      welcome: 'Selamat kembali',
+      points: 'Mata',
+      qrCode: 'Kod QR Anda',
+      invite: 'Jemput keluarga untuk mata bonus!',
+      nextReward: 'Ganjaran seterusnya pada 200 mata'
+    },
+    ta: {
+      welcome: 'மீண்டும் வரவேற்கிறோம்',
+      points: 'புள்ளிகள்',
+      qrCode: 'உங்கள் QR குறியீடு',
+      invite: 'போனஸ் புள்ளிகளுக்கு குடும்பத்தை அழைக்கவும்!',
+      nextReward: '200 புள்ளிகளில் அடுத்த வெகுமதி'
     }
   };
 
-  const t = translations[language];
+  const t = translations[language] || translations.en;
+
+  if (!user) return null;
 
   return (
     <Card className="border-2 border-green-200 bg-green-50">
@@ -37,11 +53,11 @@ const PointsDisplay: React.FC<PointsDisplayProps> = ({ user, language }) => {
             <User className="h-8 w-8 text-green-600" />
             <div>
               <CardTitle className="text-xl text-gray-800">
-                {t.welcome}, {user.nickname}!
+                {t.welcome}, {user.username}!
               </CardTitle>
               <div className="flex items-center gap-2 mt-1">
                 <QrCode className="h-4 w-4 text-gray-600" />
-                <span className="text-sm text-gray-600">{t.qrCode}: {user.qrCode}</span>
+                <span className="text-sm text-gray-600">{t.qrCode}: {user.qr_code}</span>
               </div>
             </div>
           </div>
@@ -65,7 +81,7 @@ const PointsDisplay: React.FC<PointsDisplayProps> = ({ user, language }) => {
             <div className="w-full bg-green-200 rounded-full h-3 mt-2">
               <div 
                 className="bg-green-600 h-3 rounded-full transition-all duration-300" 
-                style={{ width: `${(user.points / 200) * 100}%` }}
+                style={{ width: `${Math.min((user.points / 200) * 100, 100)}%` }}
               ></div>
             </div>
           </div>

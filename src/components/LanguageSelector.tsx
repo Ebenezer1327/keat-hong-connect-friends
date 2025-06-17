@@ -12,9 +12,8 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ language, onLanguag
   const languages = [
     { code: 'en', name: 'English', flag: '🇺🇸' },
     { code: 'zh', name: '中文', flag: '🇨🇳' },
-    // Ready for future implementation
-    // { code: 'ms', name: 'Bahasa Melayu', flag: '🇲🇾' },
-    // { code: 'ta', name: 'தமிழ்', flag: '🇮🇳' },
+    { code: 'ms', name: 'Bahasa Melayu', flag: '🇲🇾' },
+    { code: 'ta', name: 'தமிழ்', flag: '🇮🇳' },
   ];
 
   return (

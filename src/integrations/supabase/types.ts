@@ -9,7 +9,267 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      activities: {
+        Row: {
+          activity_date: string
+          activity_time: string
+          created_at: string
+          description: string
+          description_chinese: string
+          description_malay: string
+          description_tamil: string
+          id: string
+          location: string
+          location_chinese: string
+          location_malay: string
+          location_tamil: string
+          max_attendees: number | null
+          points_reward: number
+          title: string
+          title_chinese: string
+          title_malay: string
+          title_tamil: string
+        }
+        Insert: {
+          activity_date: string
+          activity_time: string
+          created_at?: string
+          description: string
+          description_chinese: string
+          description_malay: string
+          description_tamil: string
+          id?: string
+          location: string
+          location_chinese: string
+          location_malay: string
+          location_tamil: string
+          max_attendees?: number | null
+          points_reward?: number
+          title: string
+          title_chinese: string
+          title_malay: string
+          title_tamil: string
+        }
+        Update: {
+          activity_date?: string
+          activity_time?: string
+          created_at?: string
+          description?: string
+          description_chinese?: string
+          description_malay?: string
+          description_tamil?: string
+          id?: string
+          location?: string
+          location_chinese?: string
+          location_malay?: string
+          location_tamil?: string
+          max_attendees?: number | null
+          points_reward?: number
+          title?: string
+          title_chinese?: string
+          title_malay?: string
+          title_tamil?: string
+        }
+        Relationships: []
+      }
+      activity_participations: {
+        Row: {
+          activity_id: string
+          id: string
+          joined_at: string
+          points_earned: number
+          user_id: string
+        }
+        Insert: {
+          activity_id: string
+          id?: string
+          joined_at?: string
+          points_earned?: number
+          user_id: string
+        }
+        Update: {
+          activity_id?: string
+          id?: string
+          joined_at?: string
+          points_earned?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_participations_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "activities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activity_participations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      friendships: {
+        Row: {
+          created_at: string
+          friend_id: string
+          id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          friend_id: string
+          id?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          friend_id?: string
+          id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "friendships_friend_id_fkey"
+            columns: ["friend_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "friendships_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          id: string
+          phone_number: string
+          points: number
+          qr_code: string
+          updated_at: string
+          user_id: string
+          username: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          phone_number: string
+          points?: number
+          qr_code: string
+          updated_at?: string
+          user_id: string
+          username: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          phone_number?: string
+          points?: number
+          qr_code?: string
+          updated_at?: string
+          user_id?: string
+          username?: string
+        }
+        Relationships: []
+      }
+      reward_redemptions: {
+        Row: {
+          id: string
+          points_spent: number
+          redeemed_at: string
+          reward_id: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          points_spent: number
+          redeemed_at?: string
+          reward_id: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          points_spent?: number
+          redeemed_at?: string
+          reward_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reward_redemptions_reward_id_fkey"
+            columns: ["reward_id"]
+            isOneToOne: false
+            referencedRelation: "rewards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reward_redemptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rewards: {
+        Row: {
+          created_at: string
+          description: string
+          description_chinese: string
+          description_malay: string
+          description_tamil: string
+          id: string
+          image_url: string | null
+          is_available: boolean
+          points_cost: number
+          title: string
+          title_chinese: string
+          title_malay: string
+          title_tamil: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          description_chinese: string
+          description_malay: string
+          description_tamil: string
+          id?: string
+          image_url?: string | null
+          is_available?: boolean
+          points_cost: number
+          title: string
+          title_chinese: string
+          title_malay: string
+          title_tamil: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          description_chinese?: string
+          description_malay?: string
+          description_tamil?: string
+          id?: string
+          image_url?: string | null
+          is_available?: boolean
+          points_cost?: number
+          title?: string
+          title_chinese?: string
+          title_malay?: string
+          title_tamil?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

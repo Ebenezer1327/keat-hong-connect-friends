@@ -1,78 +1,21 @@
 
-import React, { useState } from 'react';
-import { Phone, MapPin, Users, Gift, Calendar, User, Globe } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { Phone, MapPin, Users, Gift, Calendar, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 import LoginModal from '@/components/LoginModal';
 import ActivityCard from '@/components/ActivityCard';
 import PointsDisplay from '@/components/PointsDisplay';
 import LanguageSelector from '@/components/LanguageSelector';
 
 const Index = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { user, profile, loading } = useAuth();
   const [showLogin, setShowLogin] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
   const [language, setLanguage] = useState('en');
-
-  // Sample activities data - elderly-focused
-  const activities = [
-    {
-      id: 1,
-      title: 'Morning Tai Chi at Block 273',
-      titleChinese: '太极晨练 - 273座',
-      date: '2024-12-18',
-      time: '07:00',
-      location: 'Block 273 Void Deck',
-      locationChinese: '273座组屋底层',
-      description: 'Join our friendly group for morning tai chi exercises. Perfect for beginners!',
-      descriptionChinese: '加入我们友好的太极晨练小组。非常适合初学者！',
-      attendees: 12,
-      friendsAttending: 3,
-      points: 50
-    },
-    {
-      id: 2,
-      title: 'Bird Watching at Keat Hong Park',
-      titleChinese: '观鸟活动 - 吉丰公园',
-      date: '2024-12-19',
-      time: '06:30',
-      location: 'Keat Hong Park',
-      locationChinese: '吉丰公园',
-      description: 'Early morning bird watching session. Bring your own binoculars or borrow ours!',
-      descriptionChinese: '清晨观鸟活动。可自带望远镜或借用我们的！',
-      attendees: 8,
-      friendsAttending: 1,
-      points: 30
-    },
-    {
-      id: 3,
-      title: 'World Cup Viewing Party',
-      titleChinese: '世界杯观赛聚会',
-      date: '2024-12-20',
-      time: '20:00',
-      location: 'Keat Hong Community Club',
-      locationChinese: '吉丰民众俱乐部',
-      description: 'Watch the big match together! Free kopi and snacks provided.',
-      descriptionChinese: '一起观看重要比赛！免费提供咖啡和小食。',
-      attendees: 25,
-      friendsAttending: 7,
-      points: 40
-    },
-    {
-      id: 4,
-      title: 'Qing Gong Exercise Class',
-      titleChinese: '气功练习班',
-      date: '2024-12-21',
-      time: '08:00',
-      location: 'Block 268 Void Deck',
-      locationChinese: '268座组屋底层',
-      description: 'Traditional qing gong exercises for health and vitality. All levels welcome.',
-      descriptionChinese: '传统气功练习，促进健康活力。欢迎各个水平的朋友。',
-      attendees: 15,
-      friendsAttending: 2,
-      points: 45
-    }
-  ];
+  const [activities, setActivities] = useState([]);
 
   const translations = {
     en: {
@@ -80,30 +23,78 @@ const Index = () => {
       subtitle: 'Connect with neighbors, join activities, earn rewards!',
       login: 'Login / Register',
       activities: 'Community Activities',
-      points: 'My Points',
       emergency: 'Call Keat Hong CC',
-      friends: 'My Friends',
+      profile: 'My Profile',
       rewards: 'Rewards Store',
-      location: 'Keat Hong, Singapore'
+      location: 'Keat Hong, Singapore',
+      joinCommunity: 'Join our community to participate in activities and earn points!'
     },
     zh: {
       welcome: '欢迎来到吉丰社区',
       subtitle: '与邻居连接，参加活动，赚取奖励！',
       login: '登录 / 注册',
       activities: '社区活动',
-      points: '我的积分',
       emergency: '致电吉丰民众俱乐部',
-      friends: '我的朋友',
+      profile: '我的个人资料',
       rewards: '奖励商店',
-      location: '吉丰，新加坡'
+      location: '吉丰，新加坡',
+      joinCommunity: '加入我们的社区以参加活动并赚取积分！'
+    },
+    ms: {
+      welcome: 'Selamat Datang ke Komuniti Keat Hong',
+      subtitle: 'Berhubung dengan jiran, sertai aktiviti, dapatkan ganjaran!',
+      login: 'Log Masuk / Daftar',
+      activities: 'Aktiviti Komuniti',
+      emergency: 'Hubungi Keat Hong CC',
+      profile: 'Profil Saya',
+      rewards: 'Kedai Ganjaran',
+      location: 'Keat Hong, Singapura',
+      joinCommunity: 'Sertai komuniti kami untuk menyertai aktiviti dan dapatkan mata!'
+    },
+    ta: {
+      welcome: 'கீட் ஹாங் சமுதாயத்திற்கு வரவேற்கிறோம்',
+      subtitle: 'அண்டை வீட்டாருடன் இணைங்கள், செயல்பாடுகளில் சேருங்கள், வெகுமதிகளைப் பெறுங்கள்!',
+      login: 'உள்நுழைவு / பதிவு',
+      activities: 'சமுதாய செயல்பாடுகள்',
+      emergency: 'கீட் ஹாங் CC ஐ அழைக்கவும்',
+      profile: 'என் சுயவிவரம்',
+      rewards: 'வெகுமதி அங்காடி',
+      location: 'கீட் ஹாங், சிங்கப்பூர்',
+      joinCommunity: 'செயல்பாடுகளில் பங்கேற்க மற்றும் புள்ளிகளைப் பெற எங்கள் சமுதாயத்தில் சேருங்கள்!'
     }
   };
 
-  const t = translations[language];
+  const t = translations[language] || translations.en;
+
+  useEffect(() => {
+    fetchActivities();
+  }, []);
+
+  const fetchActivities = async () => {
+    const { data, error } = await supabase
+      .from('activities')
+      .select('*')
+      .gte('activity_date', new Date().toISOString().split('T')[0])
+      .order('activity_date', { ascending: true })
+      .limit(10);
+
+    if (error) {
+      console.error('Error fetching activities:', error);
+      return;
+    }
+
+    setActivities(data || []);
+  };
 
   const handleEmergencyCall = () => {
     window.location.href = 'tel:67694194';
   };
+
+  if (loading) {
+    return <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100 flex items-center justify-center">
+      <div className="text-xl">Loading...</div>
+    </div>;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100">
@@ -141,11 +132,11 @@ const Index = () => {
         </div>
 
         {/* Login/User Status */}
-        {!isLoggedIn ? (
+        {!user ? (
           <Card className="mb-6 border-2 border-red-200">
             <CardContent className="p-6 text-center">
               <User className="h-12 w-12 mx-auto mb-4 text-red-600" />
-              <p className="text-xl mb-4 text-gray-700">Join our community to participate in activities and earn points!</p>
+              <p className="text-xl mb-4 text-gray-700">{t.joinCommunity}</p>
               <Button 
                 onClick={() => setShowLogin(true)}
                 className="bg-red-600 hover:bg-red-700 text-white py-4 px-8 text-lg font-semibold"
@@ -156,7 +147,7 @@ const Index = () => {
           </Card>
         ) : (
           <div className="mb-6">
-            <PointsDisplay user={currentUser} language={language} />
+            <PointsDisplay user={profile} language={language} />
           </div>
         )}
 
@@ -173,23 +164,27 @@ const Index = () => {
                 key={activity.id} 
                 activity={activity} 
                 language={language}
-                isLoggedIn={isLoggedIn}
+                isLoggedIn={!!user}
               />
             ))}
           </div>
         </div>
 
         {/* Quick Actions for Logged In Users */}
-        {isLoggedIn && (
+        {user && (
           <div className="grid md:grid-cols-2 gap-4 mb-6">
-            <Button className="bg-orange-500 hover:bg-orange-600 text-white py-6 text-lg">
-              <Users className="h-6 w-6 mr-3" />
-              {t.friends}
-            </Button>
-            <Button className="bg-green-600 hover:bg-green-700 text-white py-6 text-lg">
-              <Gift className="h-6 w-6 mr-3" />
-              {t.rewards}
-            </Button>
+            <Link to="/profile">
+              <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white py-6 text-lg">
+                <Users className="h-6 w-6 mr-3" />
+                {t.profile}
+              </Button>
+            </Link>
+            <Link to="/rewards">
+              <Button className="w-full bg-green-600 hover:bg-green-700 text-white py-6 text-lg">
+                <Gift className="h-6 w-6 mr-3" />
+                {t.rewards}
+              </Button>
+            </Link>
           </div>
         )}
       </div>
@@ -198,11 +193,6 @@ const Index = () => {
       <LoginModal 
         isOpen={showLogin} 
         onClose={() => setShowLogin(false)}
-        onLogin={(user) => {
-          setCurrentUser(user);
-          setIsLoggedIn(true);
-          setShowLogin(false);
-        }}
         language={language}
       />
     </div>
