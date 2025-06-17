@@ -278,7 +278,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
               <Star className="h-4 w-4 mr-1" />
               {activity.points_reward} pts
             </Badge>
-          </div>
+          
         </CardHeader>
 
         <CardContent>
