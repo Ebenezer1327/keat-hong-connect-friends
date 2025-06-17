@@ -286,7 +286,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
         
       >
         <DialogContent className="max-w-md mx-auto overflow-y-scroll h-[60%]">
-          <ul className=" pt-6">
+          <ul className="pt-6">
             {friends.map((friend, index) => {
               return <InvitationBlock key={index} friend={friend} />;
             })}

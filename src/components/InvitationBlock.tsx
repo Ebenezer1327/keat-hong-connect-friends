@@ -1,4 +1,5 @@
-import { Send } from "lucide-react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge, Send } from "lucide-react";
 import React, { useState } from "react";
 
 export default function InvitationBlock({ friend }) {
@@ -14,8 +15,53 @@ export default function InvitationBlock({ friend }) {
   };
 
   return (
-    <li className="flex items-center py-2 justify-between">
-      <span className="font-medium">{friend.username}</span>
+    // <li className="flex items-center py-2 justify-between hover:bg-green-50 transition px-3 pr-10" style={{
+    //     borderRadius: "50px"
+    // }}>
+    //   <span className="font-medium">{friend.username}</span>
+    //   {!isSent ? (
+    //     <button
+    //       onClick={() => {
+    //         sendInvitation();
+    //       }}
+    //       className="px-3 py-1 rounded bg-green-600 text-white text-sm font-semibold hover:bg-green-700 transition"
+    //     >
+    //       {loading ? (
+    //         <div className="flex justify-center items-center">
+    //           <div className="w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+    //         </div>
+    //       ) : (
+    //         <Send></Send>
+    //       )}
+    //     </button>
+    //   ) : (
+    //     <>
+    //       <button
+    //         className="px-3 py-1 rounded bg-gray-300 text-gray-500 text-sm font-semibold cursor-not-allowed"
+    //         disabled
+    //       >
+    //         Invited
+    //       </button>
+    //     </>
+    //   )}
+    // </li>
+    <div
+      key={friend.id}
+      className="flex items-center gap-3 p-3 sm:p-4 bg-green-50 rounded-lg mb-2"
+    >
+      <Avatar className="h-10 w-10 sm:h-12 sm:w-12">
+        <AvatarFallback className="bg-green-600 text-white">
+          {friend.username.charAt(0).toUpperCase()}
+        </AvatarFallback>
+      </Avatar>
+      <div className="flex-1 min-w-0">
+        <div className="font-medium text-sm sm:text-base truncate">
+          {friend.username}
+        </div>
+        <div className="text-xs sm:text-sm text-gray-600 truncate">
+          {friend.phone_number}
+        </div>
+      </div>
       {!isSent ? (
         <button
           onClick={() => {
@@ -41,6 +87,6 @@ export default function InvitationBlock({ friend }) {
           </button>
         </>
       )}
-    </li>
+    </div>
   );
 }
