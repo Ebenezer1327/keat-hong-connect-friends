@@ -35,6 +35,7 @@ interface Activity {
   activity_date: string;
   points_reward: number;
   max_attendees: number;
+  image_url: string;
 }
 
 interface ActivityCardProps {
@@ -299,6 +300,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
       </Dialog>
       <Card className="border-2 border-red-100 hover:border-sky-300 transition-colors">
         <CardHeader>
+          <img src={activity.image_url}></img>
           <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
             <div className="flex-1">
               <CardTitle className="text-lg sm:text-xl text-gray-800 mb-2">
@@ -344,7 +346,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
               )}
             </div>
 
-            <Badge className="bg-green-100 text-green-800 px-3 py-1">
+            <Badge className="bg-green-100 hover:bg-green-100 text-green-800 px-3 py-1">
               <Star className="h-4 w-4 mr-1" />
               {activity.points_reward} pts
             </Badge>
