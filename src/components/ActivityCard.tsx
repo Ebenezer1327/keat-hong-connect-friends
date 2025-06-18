@@ -346,7 +346,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
               )}
             </div>
 
-            <Badge className="bg-green-100 hover:bg-green-100 text-green-800 px-3 py-1">
+            <Badge className="bg-green-100 hover:bg-green-100 text-orange-500 px-3 py-1">
               <Star className="h-4 w-4 mr-1" />
               {activity.points_reward} pts
             </Badge>
