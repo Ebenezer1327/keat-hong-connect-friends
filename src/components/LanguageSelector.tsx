@@ -18,9 +18,9 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ language, onLanguag
 
   return (
     <div className="flex items-center gap-2">
-      <Globe className="h-5 w-5 text-red-100" />
+      <Globe className="h-5 w-5 text-blue-100" />
       <Select value={language} onValueChange={onLanguageChange}>
-        <SelectTrigger className="w-40 bg-white border-green-200 text-white">
+        <SelectTrigger className="w-40 bg-white border-blue-200 text-gray-700">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>

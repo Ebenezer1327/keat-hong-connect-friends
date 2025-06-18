@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Phone, MapPin, Users, Gift, Calendar, User } from 'lucide-react';
+import { Phone, MapPin, Users, Gift, Calendar, User, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
@@ -10,6 +10,7 @@ import LoginModal from '@/components/LoginModal';
 import ActivityCard from '@/components/ActivityCard';
 import PointsDisplay from '@/components/PointsDisplay';
 import LanguageSelector from '@/components/LanguageSelector';
+import WhatsAppInvite from '@/components/WhatsAppInvite';
 
 const Index = () => {
   const { user, profile, loading } = useAuth();
@@ -26,6 +27,7 @@ const Index = () => {
       emergency: 'Call Keat Hong CC',
       profile: 'My Profile',
       rewards: 'Rewards Store',
+      hobbies: 'Find Hobby Buddies',
       location: 'Keat Hong, Singapore',
       joinCommunity: 'Join our community to participate in activities and earn points!'
     },
@@ -37,6 +39,7 @@ const Index = () => {
       emergency: '致电吉丰民众俱乐部',
       profile: '我的个人资料',
       rewards: '奖励商店',
+      hobbies: '寻找兴趣伙伴',
       location: '吉丰，新加坡',
       joinCommunity: '加入我们的社区以参加活动并赚取积分！'
     },
@@ -48,6 +51,7 @@ const Index = () => {
       emergency: 'Hubungi Keat Hong CC',
       profile: 'Profil Saya',
       rewards: 'Kedai Ganjaran',
+      hobbies: 'Cari Rakan Hobi',
       location: 'Keat Hong, Singapura',
       joinCommunity: 'Sertai komuniti kami untuk menyertai aktiviti dan dapatkan mata!'
     },
@@ -59,6 +63,7 @@ const Index = () => {
       emergency: 'கீட் ஹாங் CC ஐ அழைக்கவும்',
       profile: 'என் சுயவிவரம்',
       rewards: 'வெகுமதி அங்காடி',
+      hobbies: 'பொழுதுபோக்கு நண்பர்களைக் கண்டறியவும்',
       location: 'கீட் ஹாங், சிங்கப்பூர்',
       joinCommunity: 'செயல்பாடுகளில் பங்கேற்க மற்றும் புள்ளிகளைப் பெற எங்கள் சமுதாயத்தில் சேருங்கள்!'
     }
@@ -91,15 +96,15 @@ const Index = () => {
   };
 
   if (loading) {
-    return <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100 flex items-center justify-center">
+    return <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 flex items-center justify-center">
       <div className="text-xl">Loading...</div>
     </div>;
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100">
-      {/* Header */}
-      <div className=" bg-green-700 text-white shadow-lg">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50">
+      {/* Header with softer colors */}
+      <div className="bg-blue-400 text-white shadow-lg">
         <div className="max-w-4xl mx-auto px-4 py-4 sm:py-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
             <div className="flex items-center gap-3">
@@ -120,11 +125,11 @@ const Index = () => {
       </div>
 
       <div className="max-w-4xl mx-auto px-4 py-4 sm:py-6">
-        {/* Emergency Call Button - Always Visible */}
+        {/* Emergency Call Button */}
         <div className="mb-4 sm:mb-6">
           <Button 
             onClick={handleEmergencyCall}
-            className="w-full bg-orange-500 hover:bg-blue-350 text-white py-4 sm:py-6 text-lg sm:text-xl font-bold shadow-lg"
+            className="w-full bg-orange-400 hover:bg-orange-500 text-white py-4 sm:py-6 text-lg sm:text-xl font-bold shadow-lg"
           >
             <Phone className="h-5 w-5 sm:h-6 sm:w-6 mr-2 sm:mr-3" />
             {t.emergency}: 6769 4194
@@ -133,28 +138,35 @@ const Index = () => {
 
         {/* Login/User Status */}
         {!user ? (
-          <Card className="mb-4 sm:mb-6 border-2 border-red-200">
+          <Card className="mb-4 sm:mb-6 border-2 border-blue-200">
             <CardContent className="p-4 sm:p-6 text-center">
-              <User className="h-10 w-10 sm:h-12 sm:w-12 mx-auto mb-4 text-red-600" />
+              <User className="h-10 w-10 sm:h-12 sm:w-12 mx-auto mb-4 text-blue-500" />
               <p className="text-lg sm:text-xl mb-4 text-gray-700">{t.joinCommunity}</p>
               <Button 
                 onClick={() => setShowLogin(true)}
-                className="bg-red-400 hover:bg-red-400 text-white py-3 sm:py-4 px-6 sm:px-8 text-base sm:text-lg font-semibold w-full sm:w-auto"
+                className="bg-blue-400 hover:bg-blue-500 text-white py-3 sm:py-4 px-6 sm:px-8 text-base sm:text-lg font-semibold w-full sm:w-auto"
               >
                 {t.login}
               </Button>
             </CardContent>
           </Card>
         ) : (
-          <div className="mb-4 sm:mb-6">
-            <PointsDisplay user={profile} language={language} />
-          </div>
+          <>
+            <div className="mb-4 sm:mb-6">
+              <PointsDisplay user={profile} language={language} />
+            </div>
+            
+            {/* WhatsApp Invite Section */}
+            <div className="mb-4 sm:mb-6">
+              <WhatsAppInvite language={language} />
+            </div>
+          </>
         )}
 
         {/* Activities Section */}
         <div className="mb-6 sm:mb-8">
           <div className="flex items-center gap-3 mb-4 sm:mb-6">
-            <Calendar className="h-6 w-6 sm:h-8 sm:w-8 text-sky-600" />
+            <Calendar className="h-6 w-6 sm:h-8 sm:w-8 text-blue-500" />
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-0">{t.activities}</h2>
           </div>
           
@@ -170,19 +182,25 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Quick Actions for Logged In Users */}
+        {/* Quick Actions for Logged In Users with softer colors */}
         {user && (
-          <div className="grid gap-4 sm:grid-cols-2 mb-4 sm:mb-6">
+          <div className="grid gap-4 sm:grid-cols-3 mb-4 sm:mb-6">
             <Link to="/profile">
-              <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 sm:py-6 text-base sm:text-lg">
+              <Button className="w-full bg-orange-400 hover:bg-orange-500 text-white py-4 sm:py-6 text-base sm:text-lg">
                 <Users className="h-5 w-5 sm:h-6 sm:w-6 mr-2 sm:mr-3" />
                 {t.profile}
               </Button>
             </Link>
             <Link to="/rewards">
-              <Button className="w-full bg-green-600 hover:bg-green-700 text-white py-4 sm:py-6 text-base sm:text-lg">
+              <Button className="w-full bg-green-400 hover:bg-green-500 text-white py-4 sm:py-6 text-base sm:text-lg">
                 <Gift className="h-5 w-5 sm:h-6 sm:w-6 mr-2 sm:mr-3" />
                 {t.rewards}
+              </Button>
+            </Link>
+            <Link to="/hobbies">
+              <Button className="w-full bg-purple-400 hover:bg-purple-500 text-white py-4 sm:py-6 text-base sm:text-lg">
+                <Heart className="h-5 w-5 sm:h-6 sm:w-6 mr-2 sm:mr-3" />
+                {t.hobbies}
               </Button>
             </Link>
           </div>
