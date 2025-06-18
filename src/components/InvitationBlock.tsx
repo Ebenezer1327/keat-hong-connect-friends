@@ -1,17 +1,61 @@
+
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge, Send } from "lucide-react";
+import { MessageCircle, Check } from "lucide-react";
 import React, { useState } from "react";
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { toast } from 'sonner';
 
 export default function InvitationBlock({ friend }) {
+  const { profile } = useAuth();
   const [loading, setLoading] = useState(false);
   const [isSent, setIsSent] = useState(false);
 
-  const sendInvitation = () => {
+  const sendWhatsAppInvitation = async () => {
+    if (!profile) return;
+    
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    
+    try {
+      // Save referral record
+      const { error } = await supabase
+        .from('friend_referrals')
+        .insert({
+          referrer_id: profile.id,
+          referred_phone: friend.phone_number
+        });
+
+      if (error) {
+        throw error;
+      }
+
+      // Create WhatsApp invite message
+      const appUrl = window.location.origin;
+      const referralCode = profile.qr_code;
+      
+      const message = `🏠 Hi ${friend.username}! I'm using JioME @ Keat Hong - a community app for neighbors to connect and join activities together! 
+
+Join me and earn points for rewards! 🎁
+
+Download: ${appUrl}
+My referral code: ${referralCode}
+
+Let's be more connected with our community! 😊`;
+
+      const encodedMessage = encodeURIComponent(message);
+      const whatsappUrl = `https://wa.me/${friend.phone_number.replace(/[^\d]/g, '')}?text=${encodedMessage}`;
+      
+      // Open WhatsApp
+      window.open(whatsappUrl, '_blank');
+      
       setIsSent(true);
-    }, 1000);
+      toast.success('WhatsApp invite sent successfully!');
+    } catch (error) {
+      console.error('Error sending invite:', error);
+      toast.error('Failed to send invite');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -20,7 +64,7 @@ export default function InvitationBlock({ friend }) {
       className="flex items-center gap-3 p-3 sm:p-4 bg-green-50 rounded-lg mb-2"
     >
       <Avatar className="h-10 w-10 sm:h-12 sm:w-12">
-        <AvatarFallback className="bg-green-600 text-white">
+        <AvatarFallback className="bg-green-500 text-white">
           {friend.username.charAt(0).toUpperCase()}
         </AvatarFallback>
       </Avatar>
@@ -34,28 +78,28 @@ export default function InvitationBlock({ friend }) {
       </div>
       {!isSent ? (
         <button
-          onClick={() => {
-            sendInvitation();
-          }}
-          className="px-3 py-1 rounded bg-green-600 text-white text-sm font-semibold hover:bg-green-700 transition"
+          onClick={sendWhatsAppInvitation}
+          className="px-3 py-2 rounded bg-green-500 text-white text-sm font-semibold hover:bg-green-600 transition flex items-center gap-2"
         >
           {loading ? (
             <div className="flex justify-center items-center">
-              <div className="w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-4 h-4 border-2 border-green-200 border-t-transparent rounded-full animate-spin"></div>
             </div>
           ) : (
-            <Send></Send>
+            <>
+              <MessageCircle className="h-4 w-4" />
+              <span className="hidden sm:inline">WhatsApp</span>
+            </>
           )}
         </button>
       ) : (
-        <>
-          <button
-            className="px-3 py-1 rounded bg-gray-300 text-gray-500 text-sm font-semibold cursor-not-allowed"
-            disabled
-          >
-            Invited
-          </button>
-        </>
+        <button
+          className="px-3 py-2 rounded bg-gray-300 text-gray-500 text-sm font-semibold cursor-not-allowed flex items-center gap-2"
+          disabled
+        >
+          <Check className="h-4 w-4" />
+          <span className="hidden sm:inline">Sent</span>
+        </button>
       )}
     </div>
   );

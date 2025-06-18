@@ -19,6 +19,7 @@ export type Database = {
           description_malay: string
           description_tamil: string
           id: string
+          image_url: string | null
           location: string
           location_chinese: string
           location_malay: string
@@ -39,6 +40,7 @@ export type Database = {
           description_malay: string
           description_tamil: string
           id?: string
+          image_url?: string | null
           location: string
           location_chinese: string
           location_malay: string
@@ -59,6 +61,7 @@ export type Database = {
           description_malay?: string
           description_tamil?: string
           id?: string
+          image_url?: string | null
           location?: string
           location_chinese?: string
           location_malay?: string
@@ -105,6 +108,153 @@ export type Database = {
           {
             foreignKeyName: "activity_participations_user_id_fkey"
             columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      available_hobbies: {
+        Row: {
+          created_at: string
+          icon: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      event_memories: {
+        Row: {
+          activity_id: string | null
+          created_at: string
+          id: string
+          memory_text: string | null
+          photo_url: string | null
+          user_id: string | null
+        }
+        Insert: {
+          activity_id?: string | null
+          created_at?: string
+          id?: string
+          memory_text?: string | null
+          photo_url?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          activity_id?: string | null
+          created_at?: string
+          id?: string
+          memory_text?: string | null
+          photo_url?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_memories_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "activities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_memories_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_ratings: {
+        Row: {
+          activity_id: string | null
+          comment: string | null
+          created_at: string
+          id: string
+          rating: number | null
+          user_id: string | null
+        }
+        Insert: {
+          activity_id?: string | null
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          activity_id?: string | null
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_ratings_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "activities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_ratings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      friend_referrals: {
+        Row: {
+          bonus_points_awarded: boolean | null
+          created_at: string
+          id: string
+          referred_phone: string
+          referred_user_id: string | null
+          referrer_id: string | null
+        }
+        Insert: {
+          bonus_points_awarded?: boolean | null
+          created_at?: string
+          id?: string
+          referred_phone: string
+          referred_user_id?: string | null
+          referrer_id?: string | null
+        }
+        Update: {
+          bonus_points_awarded?: boolean | null
+          created_at?: string
+          id?: string
+          referred_phone?: string
+          referred_user_id?: string | null
+          referrer_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "friend_referrals_referred_user_id_fkey"
+            columns: ["referred_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "friend_referrals_referrer_id_fkey"
+            columns: ["referrer_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -269,6 +419,35 @@ export type Database = {
           title_tamil?: string
         }
         Relationships: []
+      }
+      user_hobbies: {
+        Row: {
+          created_at: string
+          hobby_name: string
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          hobby_name: string
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          hobby_name?: string
+          id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_hobbies_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

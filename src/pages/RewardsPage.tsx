@@ -116,7 +116,6 @@ const RewardsPage = () => {
       console.error('Error fetching rewards:', error);
       return;
     }
-    console.log(data);
     
     setRewards(data || []);
   };
@@ -179,7 +178,7 @@ const RewardsPage = () => {
   };
 
   if (loading) {
-    return <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100 flex items-center justify-center">
+    return <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 flex items-center justify-center">
       <div className="text-xl">Loading...</div>
     </div>;
   }
@@ -189,16 +188,16 @@ const RewardsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100">
-      {/* Header */}
-      <div className="bg-red-600 text-white shadow-lg">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50">
+      {/* Header with softer colors */}
+      <div className="bg-green-400 text-white shadow-lg">
         <div className="max-w-4xl mx-auto px-4 py-4 sm:py-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div className="flex items-center gap-3">
               <Button
                 variant="ghost"
                 onClick={() => navigate('/')}
-                className="text-white hover:bg-red-700 p-2"
+                className="text-white hover:bg-green-500 p-2"
               >
                 <ArrowLeft className="h-5 w-5" />
               </Button>
@@ -226,9 +225,9 @@ const RewardsPage = () => {
         ) : (
           <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
             {rewards.map((reward) => (
-              <Card key={reward.id} className="border-2 border-orange-100">
+              <Card key={reward.id} className="border-2 border-green-100">
                 <CardHeader>
-                  <img src={reward.image_url}></img>
+                  {reward.image_url && <img src={reward.image_url} alt={getLocalizedText(reward, 'title')} className="w-full h-48 object-cover rounded-lg mb-4" />}
                   <div className="flex flex-col sm:flex-row justify-between items-start gap-3">
                     <div className="flex-1">
                       <CardTitle className="text-lg sm:text-xl text-gray-800 mb-2">
@@ -238,7 +237,7 @@ const RewardsPage = () => {
                         {getLocalizedText(reward, 'description')}
                       </p>
                     </div>
-                    <Badge className="bg-orange-100 text-orange-800 px-3 py-1 ml-0 sm:ml-4 hover:bg-orange-100">
+                    <Badge className="bg-green-100 text-green-800 px-3 py-1 ml-0 sm:ml-4 hover:bg-green-100">
                       <Star className="h-4 w-4 mr-1" />
                       {reward.points_cost} pts
                     </Badge>
@@ -262,7 +261,7 @@ const RewardsPage = () => {
                       }
                       className={`${
                         profile.points >= reward.points_cost
-                          ? 'bg-green-600 hover:bg-green-700' 
+                          ? 'bg-green-500 hover:bg-green-600' 
                           : 'bg-gray-400'
                       } text-white px-4 py-2 w-full sm:w-auto`}
                     >
