@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { MessageCircle, Gift } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -69,23 +68,14 @@ const WhatsAppInvite: React.FC<WhatsAppInviteProps> = ({ language }) => {
       return;
     }
 
-    if (!profile) return;
+    if (!profile) {
+      toast.error('Please log in to send invitations');
+      return;
+    }
 
     setSending(true);
 
     try {
-      // Save referral record
-      const { error } = await supabase
-        .from('friend_referrals')
-        .insert({
-          referrer_id: profile.id,
-          referred_phone: phoneNumber.trim()
-        });
-
-      if (error) {
-        throw error;
-      }
-
       // Create WhatsApp invite message
       const appUrl = window.location.origin;
       const referralCode = profile.qr_code;

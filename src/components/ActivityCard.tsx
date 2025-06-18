@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -69,7 +70,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
   const { profile, refreshProfile } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [friends, setFriends] = useState<Friend[]>([]);
-  const [reset, setReset] = useState(0);
+
   const fetchFriends = async () => {
     if (!profile) return;
 
@@ -89,27 +90,28 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
       )
       .eq("user_id", profile.id)
       .eq("status", "accepted");
-    console.log("innnn");
 
     if (error) {
       console.error("Error fetching friends:", error);
       return;
     }
 
-    const friendsData =
-      data
-        ?.map((f) => ({
-          ...f.friend,
-          status: f.status,
-        }))
-        .filter((f) => f.id) || [];
-    setFriends([...friendsData]);
-    console.log(friendsData);
+    const friendsData = data?.map((f: any) => ({
+      id: f.friend.id,
+      username: f.friend.username,
+      phone_number: f.friend.phone_number,
+      points: f.friend.points,
+      status: f.status,
+    })).filter((f: any) => f.id) || [];
+    
+    setFriends(friendsData);
   };
 
   useEffect(() => {
-    fetchFriends();
-  }, [isOpen]);
+    if (isOpen) {
+      fetchFriends();
+    }
+  }, [isOpen, profile]);
 
   const translations = {
     en: {
@@ -284,44 +286,42 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
     <>
       <Dialog
         open={isOpen}
-        onOpenChange={() => {
-          setIsOpen(false);
-        }}
-        
+        onOpenChange={setIsOpen}
       >
         <DialogContent className="max-w-md mx-auto overflow-y-scroll h-[60%]">
+          <DialogHeader>
+            <DialogTitle>{t.headerInvitation}</DialogTitle>
+          </DialogHeader>
           <ul className="pt-6">
             {friends.map((friend, index) => {
               return <InvitationBlock key={index} friend={friend} />;
             })}
           </ul>
-          {/* </div> */}
         </DialogContent>
       </Dialog>
       <Card className="border-2 border-red-100 hover:border-sky-300 transition-colors">
         <CardHeader>
-          <img src={activity.image_url}></img>
+          {activity.image_url && <img src={activity.image_url} alt={getLocalizedText("title")} />}
           <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
             <div className="flex-1">
               <CardTitle className="text-lg sm:text-xl text-gray-800 mb-2">
                 {getLocalizedText("title")}
               </CardTitle>
 
-              <div className="flex items-center gap-1 text-gray-600 text-sm">
-              <Calendar className="h-4 w-4" />
-              <span>
-                {new Date(activity.activity_date).toLocaleDateString()}{" "}
-                {new Date(activity.activity_date).toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </span>
-            </div>
+              <div className="flex items-center gap-1 text-gray-600 text-sm mb-1">
+                <Calendar className="h-4 w-4" />
+                <span>
+                  {new Date(activity.activity_date).toLocaleDateString()}{" "}
+                  {new Date(activity.activity_date).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </span>
+              </div>
 
-                <div className="flex items-center gap-1 text-gray-600 text-sm">
-                  <MapPin className="h-4 w-4" />
-                  <span>{getLocalizedText("location")}</span>
-                </div>
+              <div className="flex items-center gap-1 text-gray-600 text-sm">
+                <MapPin className="h-4 w-4" />
+                <span>{getLocalizedText("location")}</span>
               </div>
 
               {/* Mutual Friends Section */}
@@ -350,7 +350,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
               <Star className="h-4 w-4 mr-1" />
               {activity.points_reward} pts
             </Badge>
-          
+          </div>
         </CardHeader>
 
         <CardContent>
@@ -367,15 +367,11 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
             {isLoggedIn ? (
               <div className="flex gap-1">
                 <Button
-                  onClick={() => {
-                    setIsOpen(true);
-                  }}
-                  className={`${"bg-green-700"} text-white px-4 py-2 w-full sm:w-auto`}
+                  onClick={() => setIsOpen(true)}
+                  className="bg-green-700 hover:bg-green-800 text-white px-4 py-2 w-full sm:w-auto"
                 >
-                  <>
-                    <Send></Send>
-                    {t.sendInvitaion}
-                  </>
+                  <Send className="h-4 w-4 mr-1" />
+                  {t.sendInvitaion}
                 </Button>
                 <Button
                   onClick={handleJoinActivity}

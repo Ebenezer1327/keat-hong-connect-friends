@@ -6,29 +6,32 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 
-export default function InvitationBlock({ friend }) {
+interface Friend {
+  id: string;
+  username: string;
+  phone_number: string;
+  points: number;
+  status: string;
+}
+
+interface InvitationBlockProps {
+  friend: Friend;
+}
+
+export default function InvitationBlock({ friend }: InvitationBlockProps) {
   const { profile } = useAuth();
   const [loading, setLoading] = useState(false);
   const [isSent, setIsSent] = useState(false);
 
   const sendWhatsAppInvitation = async () => {
-    if (!profile) return;
+    if (!profile) {
+      toast.error('Please log in to send invitations');
+      return;
+    }
     
     setLoading(true);
     
     try {
-      // Save referral record
-      const { error } = await supabase
-        .from('friend_referrals')
-        .insert({
-          referrer_id: profile.id,
-          referred_phone: friend.phone_number
-        });
-
-      if (error) {
-        throw error;
-      }
-
       // Create WhatsApp invite message
       const appUrl = window.location.origin;
       const referralCode = profile.qr_code;

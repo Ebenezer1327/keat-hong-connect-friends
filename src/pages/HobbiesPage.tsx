@@ -120,10 +120,12 @@ const HobbiesPage = () => {
   };
 
   const fetchUserHobbies = async () => {
+    if (!profile?.id) return;
+
     const { data, error } = await supabase
       .from('user_hobbies')
       .select('hobby_name')
-      .eq('user_id', profile?.id);
+      .eq('user_id', profile.id);
 
     if (error) {
       console.error('Error fetching user hobbies:', error);
@@ -134,6 +136,8 @@ const HobbiesPage = () => {
   };
 
   const fetchHobbyMatches = async () => {
+    if (!profile?.id) return;
+
     const { data, error } = await supabase
       .from('user_hobbies')
       .select(`
@@ -142,7 +146,7 @@ const HobbiesPage = () => {
         user_id,
         profiles!inner(username, phone_number)
       `)
-      .neq('user_id', profile?.id);
+      .neq('user_id', profile.id);
 
     if (error) {
       console.error('Error fetching hobby matches:', error);
@@ -153,7 +157,7 @@ const HobbiesPage = () => {
   };
 
   const addHobby = async (hobbyName: string) => {
-    if (!profile) return;
+    if (!profile?.id) return;
 
     const { error } = await supabase
       .from('user_hobbies')
@@ -174,7 +178,7 @@ const HobbiesPage = () => {
   };
 
   const removeHobby = async (hobbyName: string) => {
-    if (!profile) return;
+    if (!profile?.id) return;
 
     const { error } = await supabase
       .from('user_hobbies')
