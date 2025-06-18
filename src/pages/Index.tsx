@@ -99,21 +99,21 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100">
       {/* Header */}
-      <div className="bg-red-600 text-white shadow-lg">
+      <div className=" bg-green-700 text-white shadow-lg">
         <div className="max-w-4xl mx-auto px-4 py-4 sm:py-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
             <div className="flex items-center gap-3">
               <Users className="h-6 w-6 sm:h-8 sm:w-8" />
               <div>
-                <h1 className="text-xl sm:text-2xl font-bold">{t.welcome}</h1>
-                <p className="text-red-100 text-base sm:text-lg">{t.subtitle}</p>
+                <h1 className="text-xl text-white sm:text-2xl font-bold">{t.welcome}</h1>
+                <p className="text-white text-base sm:text-lg">{t.subtitle}</p>
               </div>
             </div>
             <LanguageSelector language={language} onLanguageChange={setLanguage} />
           </div>
           
-          <div className="flex items-center gap-2 text-red-100">
-            <MapPin className="h-4 w-4 sm:h-5 sm:w-5" />
+          <div className="flex items-center gap-2">
+            <MapPin className="h-4 text-white w-4 sm:h-5 sm:w-5" />
             <span className="text-base sm:text-lg">{t.location}</span>
           </div>
         </div>
@@ -124,7 +124,7 @@ const Index = () => {
         <div className="mb-4 sm:mb-6">
           <Button 
             onClick={handleEmergencyCall}
-            className="w-full bg-red-700 hover:bg-red-800 text-white py-4 sm:py-6 text-lg sm:text-xl font-bold shadow-lg"
+            className="w-full bg-orange-500 hover:bg-blue-350 text-white py-4 sm:py-6 text-lg sm:text-xl font-bold shadow-lg"
           >
             <Phone className="h-5 w-5 sm:h-6 sm:w-6 mr-2 sm:mr-3" />
             {t.emergency}: 6769 4194
@@ -139,7 +139,7 @@ const Index = () => {
               <p className="text-lg sm:text-xl mb-4 text-gray-700">{t.joinCommunity}</p>
               <Button 
                 onClick={() => setShowLogin(true)}
-                className="bg-red-600 hover:bg-red-700 text-white py-3 sm:py-4 px-6 sm:px-8 text-base sm:text-lg font-semibold w-full sm:w-auto"
+                className="bg-red-400 hover:bg-red-400 text-white py-3 sm:py-4 px-6 sm:px-8 text-base sm:text-lg font-semibold w-full sm:w-auto"
               >
                 {t.login}
               </Button>
@@ -154,8 +154,8 @@ const Index = () => {
         {/* Activities Section */}
         <div className="mb-6 sm:mb-8">
           <div className="flex items-center gap-3 mb-4 sm:mb-6">
-            <Calendar className="h-6 w-6 sm:h-8 sm:w-8 text-red-600" />
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">{t.activities}</h2>
+            <Calendar className="h-6 w-6 sm:h-8 sm:w-8 text-sky-600" />
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-0">{t.activities}</h2>
           </div>
           
           <div className="grid gap-4 sm:gap-6">

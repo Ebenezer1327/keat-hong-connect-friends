@@ -130,7 +130,8 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
       alreadyJoined: "已参加此活动",
       joinError: "参加活动失败",
       mutualFriendsJoined: "朋友已参加",
-      sendInvitaion: "Send Invitation",
+      sendInvitaion: "发送邀请",
+      headerInvitation: "邀请",
     },
     ms: {
       joinActivity: "Sertai Aktiviti",
@@ -140,7 +141,8 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
       alreadyJoined: "Sudah menyertai aktiviti ini",
       joinError: "Gagal menyertai aktiviti",
       mutualFriendsJoined: "kawan sertai",
-      sendInvitaion: "Send Invitation",
+      sendInvitaion: "Hantar Jemputan",
+      headerInvitation: "Jemputan",
     },
     ta: {
       joinActivity: "செயல்பாட்டில் சேருங்கள்",
@@ -150,7 +152,8 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
       alreadyJoined: "ஏற்கனவே இந்த நடவடிக்கையில் சேர்ந்துள்ளீர்கள்",
       joinError: "செயல்பாட்டில் சேர்வதில் தோல்வி",
       mutualFriendsJoined: "நண்பர்கள் சேர்ந்தனர்",
-      sendInvitaion: "Send Invitation",
+      sendInvitaion: "அழைப்பை அனுப்பு",
+      headerInvitation: "அழைப்புகள்",
     },
   };
 
@@ -294,7 +297,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
           {/* </div> */}
         </DialogContent>
       </Dialog>
-      <Card className="border-2 border-red-100 hover:border-red-300 transition-colors">
+      <Card className="border-2 border-red-100 hover:border-sky-300 transition-colors">
         <CardHeader>
           <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
             <div className="flex-1">
